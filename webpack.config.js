@@ -15,14 +15,14 @@ module.exports = {
         test: /\.css$/,
         use: [
           'style-loader',
-          'css-loader'
-        ]
-      }
+          'css-loader',
+        ],
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'template.html',
+      template: 'index.html',
     }),
   ],
 };
