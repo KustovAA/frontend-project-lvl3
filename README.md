@@ -5,7 +5,7 @@
 [![Actions Status](https://github.com/KustovAA/frontend-project-lvl3/workflows/Node%20CI/badge.svg)](https://github.com/KustovAA/frontend-project-lvl3/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8531137517379da56033/maintainability)](https://codeclimate.com/github/KustovAA/frontend-project-lvl3/maintainability)
 
-*Описание проекта*
+Cервис для агрегации RSS-потоков, с помощью которых удобно читать разнообразные источники, например, блоги. Он позволяет добавлять неограниченное количество RSS-лент, сам их обновляет и добавляет новые записи в общий поток.
 
 ## Требования
 
