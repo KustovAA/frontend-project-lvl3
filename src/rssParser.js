@@ -5,7 +5,9 @@ const rssParser = (data) => {
 
   const parseError = dom.querySelector('parsererror');
   if (parseError) {
-    throw new Error(parseError.textContent);
+    const error = new Error(parseError.textContent);
+    error.isRssError = true;
+    throw error;
   }
 
   const title = dom.querySelector('channel > title')?.textContent;

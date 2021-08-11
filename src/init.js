@@ -15,7 +15,10 @@ export default () => {
     modal: {
       postId: null,
     },
-    loadingStatus: '',
+    loading: {
+      status: '',
+      error: null,
+    },
   };
 
   new App(initialState, rssParser, i18nextInstance).start();

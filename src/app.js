@@ -47,9 +47,16 @@ export default class App {
               url: 'Ссылка должна быть валидным URL',
               noRss: 'Ресурс не содержит валидный RSS',
             },
-            loadingStatus: {
-              success: 'RSS успешно загружен',
-            }
+            loading: {
+              status: {
+                success: 'RSS успешно загружен',
+                fail: {
+                  network: 'Ошибка сети',
+                  rss: 'Ресурс не содержит валидный RSS',
+                  unknown: 'Ошибка',
+                },
+              },
+            },
           },
         },
       },
@@ -103,6 +110,10 @@ export default class App {
   }
 
   loadRss(url) {
+    this.watchedState.state.loading = {
+      ...this.watchedState.state.loading,
+      status: 'loading',
+    };
     axios.get(withProxy(url)).then((res) => {
       const { title, description, items } = this.parser(res.data.contents);
       const feed = {
@@ -113,11 +124,29 @@ export default class App {
         ...items.map((item) => ({ ...item, feedId: feed.id, id: uniqueId() })),
         ...this.watchedState.state.posts,
       ];
-      this.watchedState.state.loadingStatus = 'success';
-    }).then(() => {
+      this.watchedState.state.loading = {
+        ...this.watchedState.state.loading,
+        status: 'success',
+      };
       setTimeout(() => this.updateRss(), updateRssTimeout);
     }).catch((e) => {
-      
+      const getLoadingErrorType = (err) => {
+        if (err.isAxiosError) {
+          return 'loading.status.fail.network';
+        }
+
+        if (err.isRssError) {
+          return 'loading.status.fail.rss';
+        }
+
+        return 'loading.status.fail.unknown';
+      };
+
+      this.watchedState.state.loading = {
+        ...this.watchedState.state.loading,
+        error: getLoadingErrorType(e),
+        status: 'fail',
+      };
     });
   }
 

@@ -18,8 +18,8 @@ export default class WatchedState {
         case 'modal':
           this.handleModal();
           break;
-        case 'loadingStatus':
-          this.handleLoadingStatus();
+        case 'loading':
+          this.handleLoading();
           break;
         default:
           break;
@@ -136,28 +136,36 @@ export default class WatchedState {
     document.body.querySelector('.full-article').setAttribute('href', post.link);
   }
 
-  handleLoadingStatus() {
-    const { loadingStatus } = this.state;
+  handleLoading() {
+    const { status, error } = this.state.loading;
 
-    if (loadingStatus === 'success') {
+    if (status === 'success') {
       this.elements.submit.disabled = false;
-      this.elements.input.setAttribute('readonly', false);
+      this.elements.input.removeAttribute('readonly');
       this.elements.input.classList.remove('is-invalid');
       this.elements.feedback.classList.remove('text-danger');
       this.elements.feedback.classList.add('text-success');
-      this.elements.feedback.innerHTML = this.i18next.t('loadingStatus.success');
-      console.warn(this.i18next.t('loadingStatus.success'));
+      this.elements.feedback.innerHTML = this.i18next.t('loading.status.success');
+      console.warn(this.i18next.t('loading.status.success'));
       return;
     }
 
-    if (loadingStatus === 'loading') {
+    if (status === 'loading') {
       this.elements.submit.disabled = true;
       this.elements.input.setAttribute('readonly', true);
       this.elements.input.classList.remove('is-invalid');
       this.elements.feedback.classList.remove('text-danger');
       this.elements.feedback.classList.remove('text-success');
       this.elements.feedback.innerHTML = '';
-      return;
+    }
+
+    if (status === 'fail') {
+      this.elements.submit.disabled = false;
+      this.elements.input.removeAttribute('readonly');
+      this.elements.input.classList.add('is-invalid');
+      this.elements.feedback.classList.add('text-danger');
+      this.elements.feedback.classList.remove('text-success');
+      this.elements.feedback.innerHTML = this.i18next.t(error);
     }
   }
 
