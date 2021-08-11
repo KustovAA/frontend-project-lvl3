@@ -32,6 +32,9 @@ export default class App {
       string: {
         url: () => ({ key: 'errors.url' }),
       },
+      mixed: {
+        notOneOf: () => ({ key: 'errors.exists' }),
+      },
     });
     this.formValidationSchema = string().url().required();
   }
@@ -46,6 +49,7 @@ export default class App {
             errors: {
               url: 'Ссылка должна быть валидным URL',
               noRss: 'Ресурс не содержит валидный RSS',
+              exists: 'RSS уже существует',
             },
             loading: {
               status: {
@@ -103,7 +107,8 @@ export default class App {
   }
 
   validateForm(url) {
-    return this.formValidationSchema
+    const feeds = this.watchedState.state.feeds.map((f) => f.url);
+    return this.formValidationSchema.notOneOf(feeds)
       .validate(url)
       .then(() => null)
       .catch((e) => e.message);
@@ -119,6 +124,7 @@ export default class App {
       const feed = {
         title, description, url, id: uniqueId(),
       };
+      
       this.watchedState.state.feeds = [feed, ...this.watchedState.state.feeds];
       this.watchedState.state.posts = [
         ...items.map((item) => ({ ...item, feedId: feed.id, id: uniqueId() })),
