@@ -18,6 +18,9 @@ export default class WatchedState {
         case 'modal':
           this.handleModal();
           break;
+        case 'loadingStatus':
+          this.handleLoadingStatus();
+          break;
         default:
           break;
       }
@@ -131,6 +134,31 @@ export default class WatchedState {
     document.body.querySelector('.modal-title').textContent = post.title;
     document.body.querySelector('.modal-body').textContent = post.description;
     document.body.querySelector('.full-article').setAttribute('href', post.link);
+  }
+
+  handleLoadingStatus() {
+    const { loadingStatus } = this.state;
+
+    if (loadingStatus === 'success') {
+      this.elements.submit.disabled = false;
+      this.elements.input.setAttribute('readonly', false);
+      this.elements.input.classList.remove('is-invalid');
+      this.elements.feedback.classList.remove('text-danger');
+      this.elements.feedback.classList.add('text-success');
+      this.elements.feedback.innerHTML = this.i18next.t('loadingStatus.success');
+      console.warn(this.i18next.t('loadingStatus.success'));
+      return;
+    }
+
+    if (loadingStatus === 'loading') {
+      this.elements.submit.disabled = true;
+      this.elements.input.setAttribute('readonly', true);
+      this.elements.input.classList.remove('is-invalid');
+      this.elements.feedback.classList.remove('text-danger');
+      this.elements.feedback.classList.remove('text-success');
+      this.elements.feedback.innerHTML = '';
+      return;
+    }
   }
 
   get state() {

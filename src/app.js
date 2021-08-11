@@ -22,6 +22,7 @@ export default class App {
     this.elements = {
       form: document.body.querySelector('#rss-form'),
       input: document.body.querySelector('#rss-input'),
+      submit: document.body.querySelector('#rss-submit'),
       feedback: document.body.querySelector('.feedback'),
       feedsContainer: document.querySelector('.feeds'),
       postsContainer: document.querySelector('.posts'),
@@ -46,6 +47,9 @@ export default class App {
               url: 'Ссылка должна быть валидным URL',
               noRss: 'Ресурс не содержит валидный RSS',
             },
+            loadingStatus: {
+              success: 'RSS успешно загружен',
+            }
           },
         },
       },
@@ -109,8 +113,11 @@ export default class App {
         ...items.map((item) => ({ ...item, feedId: feed.id, id: uniqueId() })),
         ...this.watchedState.state.posts,
       ];
+      this.watchedState.state.loadingStatus = 'success';
     }).then(() => {
       setTimeout(() => this.updateRss(), updateRssTimeout);
+    }).catch((e) => {
+      
     });
   }
 
