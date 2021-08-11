@@ -181,7 +181,7 @@ export default class WatchedState {
         link.classList.add('fw-normal');
         link.classList.add('link-secondary');
       }
-    })
+    });
   }
 
   get state() {
