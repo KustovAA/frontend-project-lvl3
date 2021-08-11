@@ -21,6 +21,9 @@ export default class WatchedState {
         case 'loading':
           this.handleLoading();
           break;
+        case 'seenPosts':
+          this.handleSeenPosts();
+          break;
         default:
           break;
       }
@@ -78,7 +81,7 @@ export default class WatchedState {
   }
 
   handlePosts() {
-    const { posts } = this.state;
+    const { posts, seenPosts } = this.state;
     const postsContainer = document.createElement('div');
     postsContainer.classList.add('card');
     postsContainer.classList.add('border-0');
@@ -102,7 +105,7 @@ export default class WatchedState {
       item.classList.add('border-0');
       item.classList.add('border-end-0');
       item.innerHTML = `
-                <a href="${post.link}" class="fw-bold" data-id="${post.id}" target="_blank" rel="noopener noreferrer">
+                <a href="${post.link}" class="${seenPosts.has(post.id) ? 'fw-normal link-secondary' : 'fw-bold'}" data-id="${post.id}" target="_blank" rel="noopener noreferrer">
                     ${post.title}
                 </a>
                 <button type="button" class="btn btn-outline-primary btn-sm" data-id="${post.id}" data-bs-toggle="modal" data-bs-target="#modal">
@@ -146,7 +149,6 @@ export default class WatchedState {
       this.elements.feedback.classList.remove('text-danger');
       this.elements.feedback.classList.add('text-success');
       this.elements.feedback.innerHTML = this.i18next.t('loading.status.success');
-      console.warn(this.i18next.t('loading.status.success'));
       return;
     }
 
@@ -167,6 +169,19 @@ export default class WatchedState {
       this.elements.feedback.classList.remove('text-success');
       this.elements.feedback.innerHTML = this.i18next.t(error);
     }
+  }
+
+  handleSeenPosts() {
+    const { seenPosts } = this.state;
+    Array.from(seenPosts).forEach((id) => {
+      const link = document.body.querySelector(`a[data-id='${id}'`);
+
+      if (link) {
+        link.classList.remove('fw-bold');
+        link.classList.add('fw-normal');
+        link.classList.add('link-secondary');
+      }
+    })
   }
 
   get state() {

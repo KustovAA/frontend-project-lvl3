@@ -85,6 +85,7 @@ export default class App {
         ...this.watchedState.state.modal,
         postId: String(e.target.dataset.id),
       };
+      this.watchedState.state.seenPosts.add(e.target.dataset.id);
     });
   }
 

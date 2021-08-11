@@ -12,6 +12,7 @@ export default () => {
     },
     feeds: [],
     posts: [],
+    seenPosts: new Set(),
     modal: {
       postId: null,
     },
