@@ -124,7 +124,7 @@ export default class App {
       const feed = {
         title, description, url, id: uniqueId(),
       };
-      
+
       this.watchedState.state.feeds = [feed, ...this.watchedState.state.feeds];
       this.watchedState.state.posts = [
         ...items.map((item) => ({ ...item, feedId: feed.id, id: uniqueId() })),
