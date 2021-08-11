@@ -4,6 +4,7 @@ import axios from 'axios';
 import uniqueId from 'lodash/uniqueId';
 import differenceWith from 'lodash/differenceWith';
 import WatchedState from './watcher';
+import resources from './Intl';
 
 const withProxy = (url) => {
   const proxyUrl = 'https://hexlet-allorigins.herokuapp.com';
@@ -36,34 +37,13 @@ export default class App {
         notOneOf: () => ({ key: 'errors.exists' }),
       },
     });
-    this.formValidationSchema = string().url().required();
   }
 
   start() {
     this.i18nextInstance.init({
       lng: 'ru',
       debug: false,
-      resources: {
-        ru: {
-          translation: {
-            errors: {
-              url: 'Ссылка должна быть валидным URL',
-              noRss: 'Ресурс не содержит валидный RSS',
-              exists: 'RSS уже существует',
-            },
-            loading: {
-              status: {
-                success: 'RSS успешно загружен',
-                fail: {
-                  network: 'Ошибка сети',
-                  rss: 'Ресурс не содержит валидный RSS',
-                  unknown: 'Ошибка',
-                },
-              },
-            },
-          },
-        },
-      },
+      resources,
     }).then(this.initListenrs.bind(this));
   }
 
@@ -109,17 +89,25 @@ export default class App {
 
   validateForm(url) {
     const feeds = this.watchedState.state.feeds.map((f) => f.url);
-    return this.formValidationSchema.notOneOf(feeds)
+    return string()
+      .url()
+      .required()
+      .notOneOf(feeds)
       .validate(url)
       .then(() => null)
       .catch((e) => e.message);
   }
 
-  loadRss(url) {
+  setLoadingStatus(status, error = this.watchedState.state.error) {
     this.watchedState.state.loading = {
       ...this.watchedState.state.loading,
-      status: 'loading',
+      status,
+      error,
     };
+  }
+
+  loadRss(url) {
+    this.setLoadingStatus('loading');
     axios.get(withProxy(url)).then((res) => {
       const { title, description, items } = this.parser(res.data.contents);
       const feed = {
@@ -131,10 +119,7 @@ export default class App {
         ...items.map((item) => ({ ...item, feedId: feed.id, id: uniqueId() })),
         ...this.watchedState.state.posts,
       ];
-      this.watchedState.state.loading = {
-        ...this.watchedState.state.loading,
-        status: 'success',
-      };
+      this.setLoadingStatus('success');
       setTimeout(() => this.updateRss(), updateRssTimeout);
     }).catch((e) => {
       const getLoadingErrorType = (err) => {
@@ -149,11 +134,7 @@ export default class App {
         return 'loading.status.fail.unknown';
       };
 
-      this.watchedState.state.loading = {
-        ...this.watchedState.state.loading,
-        error: getLoadingErrorType(e),
-        status: 'fail',
-      };
+      this.setLoadingStatus('fail', getLoadingErrorType(e));
     });
   }
 
