@@ -55,7 +55,7 @@ export default class WatchedState {
     feedsContainer.innerHTML = `
             <div class="card border-0">
                 <div class="card-body">
-                    <h2 class="card-title h4">Фиды</h2>
+                    <h2 class="card-title h4">${this.i18next.t('feeds')}</h2>
                 </div>
             </div>
         `;
@@ -72,10 +72,10 @@ export default class WatchedState {
       itemTitle.classList.add('h6', 'm-0');
       itemTitle.textContent = feed.title;
       const itemDescription = document.createElement('p');
-      itemDescription.classList.add('m-0', 'small, 'text-black-50');
+      itemDescription.classList.add('m-0', 'small', 'text-black-50');
       itemDescription.textContent = feed.description;
       item.append(itemTitle);
-      itemDescription,.append(itemDescription);
+      item.append(itemDescription);
       feedsList.append(item);
     });
     feedsContainer.append(feedsList);
@@ -90,7 +90,7 @@ export default class WatchedState {
     postsContainer.innerHTML = `
             <div class="card border-0">
                 <div class="card-body">
-                    <h2 class="card-title h4">Посты</h2>
+                    <h2 class="card-title h4">${this.i18next.t('posts')}</h2>
                 </div>
             </div>
         `;
@@ -100,20 +100,24 @@ export default class WatchedState {
     postsList.classList.add('rounded-0');
     posts.forEach((post) => {
       const item = document.createElement('li');
-      item.classList.add('list-group-item');
-      item.classList.add('d-flex');
-      item.classList.add('justify-content-between');
-      item.classList.add('align-items-start');
-      item.classList.add('border-0');
-      item.classList.add('border-end-0');
-      item.innerHTML = `
-                <a href="${post.link}" class="${seenPosts.has(post.id) ? 'fw-normal link-secondary' : 'fw-bold'}" data-id="${post.id}" target="_blank" rel="noopener noreferrer">
-                    ${post.title}
-                </a>
-                <button type="button" class="btn btn-outline-primary btn-sm" data-id="${post.id}" data-bs-toggle="modal" data-bs-target="#modal">
-                    Просмотр
-                </button>
-            `;
+      item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+      const itemLink = document.createElement('a');
+      itemLink.setAttribute('href', post.link);
+      const linkClasses = seenPosts.has(post.id) ? ['fw-normal', 'link-secondary'] : ['fw-bold'];
+      itemLink.classList.add(...linkClasses);
+      itemLink.dataset.id = post.id;
+      itemLink.textContent = post.title;
+      itemLink.setAttribute('target', '_blank');
+      itemLink.setAttribute('rel', 'noopener noreferrer');
+      item.appendChild(itemLink);
+      const button = document.createElement('button');
+      button.setAttribute('type', 'button');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.dataset.id = post.id;
+      button.dataset.bsToggle = 'modal';
+      button.dataset.bsTarget = '#modal';
+      button.textContent = this.i18next.t('view');
+      item.appendChild(button);
 
       postsList.append(item);
     });
