@@ -38,8 +38,6 @@ export default class WatchedState {
       this.elements.feedback.classList.remove('text-danger');
       this.elements.feedback.classList.add('text-success');
       this.elements.feedback.innerHTML = '';
-      this.elements.form.reset();
-      this.elements.input?.focus();
       return;
     }
 
@@ -70,10 +68,14 @@ export default class WatchedState {
       item.classList.add('list-group-item');
       item.classList.add('border-0');
       item.classList.add('border-end-0');
-      item.innerHTML = `
-                    <h3 class="h6 m-0">${feed.title}</h3>
-                    <p class="m-0 small text-black-50">${feed.description}</p>
-            `;
+      const itemTitle = document.createElement('h3');
+      itemTitle.classList.add('h6', 'm-0');
+      itemTitle.textContent = feed.title;
+      const itemDescription = document.createElement('p');
+      itemDescription.classList.add('m-0', 'small, 'text-black-50');
+      itemDescription.textContent = feed.description;
+      item.append(itemTitle);
+      itemDescription,.append(itemDescription);
       feedsList.append(item);
     });
     feedsContainer.append(feedsList);
@@ -149,6 +151,8 @@ export default class WatchedState {
       this.elements.feedback.classList.remove('text-danger');
       this.elements.feedback.classList.add('text-success');
       this.elements.feedback.innerHTML = this.i18next.t('loading.status.success');
+      this.elements.form.reset();
+      this.elements.input?.focus();
       return;
     }
 

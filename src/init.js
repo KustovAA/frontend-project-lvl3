@@ -17,7 +17,7 @@ export default () => {
       postId: null,
     },
     loading: {
-      status: '',
+      status: 'success',
       error: null,
     },
   };
